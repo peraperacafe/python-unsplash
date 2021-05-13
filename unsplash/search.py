@@ -8,15 +8,19 @@ class Search(Client):
     def __init__(self, **kwargs):
         super(Search, self).__init__(**kwargs)
 
-    def _search(self, url, query, page=1, per_page=10):
+    def _search(self, url, query, page=1, per_page=10, **kwargs):
         params = {
             "query": query,
             "page": page,
             "per_page": per_page
         }
+
+        if kwargs:
+            params.update(kwargs)
+
         return self._get(url, params=params)
 
-    def photos(self, query, page=1, per_page=10):
+    def photos(self, query, page=1, per_page=10, **kwargs):
         """
         Get a single page of photo results for a query.
 
@@ -26,7 +30,7 @@ class Search(Client):
         :return: [dict]: {u'total': 0, u'total_pages': 0, u'results': [Photo]}
         """
         url = "/search/photos"
-        data = self._search(url, query, page=page, per_page=per_page)
+        data = self._search(url, query, page=page, per_page=per_page, **kwargs)
         data["results"] = PhotoModel.parse_list(data.get("results"))
         return data
 
